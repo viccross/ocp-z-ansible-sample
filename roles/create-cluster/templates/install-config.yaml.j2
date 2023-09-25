@@ -1,0 +1,27 @@
+apiVersion: v1
+baseDomain: "{{ cluster_base_domain }}"
+proxy:
+  httpProxy: http://172.24.26.1:3128
+  httpsProxy: http://172.24.26.1:3128
+  noProxy: .{{ cluster_name }}.{{ cluster_base_domain }},169.254.169.254,172.24.26.0/24
+compute:
+- hyperthreading: Enabled
+  name: worker
+  replicas: 2
+controlPlane:
+  hyperthreading: Enabled
+  name: master
+  replicas: 3
+metadata:
+  name: "{{ cluster_name }}"
+networking:
+  clusterNetworks:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  networkType: OpenShiftSDN
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  none: {}
+pullSecret: '{{ ocp4_pull_secret | to_json }}'
+sshKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDFG3HAD+XYOOcWnSS2wjdO6DdHcpCfX96u1NycLAsa+VtNt20v3pPOLNpxq8GoJQiFKXZb+yu7DKNGqpH/ih39Jez48vq2auV0gpTOgIQ40rHK7cjFrEtzXIxgK/bJz+J+drETOtfYQsOdUXJVruWqbBh7skwEgD4oL3kxQJ65OVtw00laJvMNlu6ZLx2ElR/iXth+K714eaqDsrY1gIInDSYd6Ehi+oEoqhiSdaWU1ZkOp7ELSxghPAs8ZuwpFVSv0LH3mvm2S7c8UhEZxARWubxanbe1ZNeQHkuG0dsAIC6PkmyPYkNZj87eV6P2eD+6MERCERewvYtE5vUO+Bav OCP-4-Admin'

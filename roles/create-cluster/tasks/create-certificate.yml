@@ -1,0 +1,37 @@
+---
+- name: generate private key
+  openssl_privatekey:
+    path: "/etc/pki/tls/private/{{ item.filename }}.pem"
+
+- name: generate z/VM CSR
+  openssl_csr:
+    path: "/etc/pki/tls/misc/{{ item.filename }}.csr"
+    privatekey_path: "/etc/pki/tls/private/{{ item.filename }}.pem"
+    common_name: "{{ item.common_name }}"
+    organization_name: "IBM"
+    organizational_unit_name: "IBM z/VM for Red Hat Openshift PoC"
+    country_name: "US"
+    keyUsage: ["digitalSignature","keyAgreement"]
+    extendedKeyUsage: ["clientAuth","serverAuth"]
+
+- name: generate Certificate
+  openssl_certificate:
+    path: "/etc/pki/tls/certs/{{ item.filename }}.cert"
+    csr_path: "/etc/pki/tls/misc/{{ item.filename }}.csr"
+    ownca_path: "/etc/pki/tls/certs/oqsCA.cert"
+    ownca_privatekey_path: "/etc/pki/tls/private/oqsCA.pem"
+    ownca_not_after: +397d
+    provider: ownca
+    force: yes
+
+- name: Generate PKCS12 file
+  openssl_pkcs12:
+    action: export
+    path: "/etc/pki/tls/certs/{{ item.filename }}.p12"
+    friendly_name: "{{ item.filename }}"
+    privatekey_path: "/etc/pki/tls/private/{{ item.filename }}.pem"
+    certificate_path: "/etc/pki/tls/certs/{{ item.filename }}.cert"
+    other_certificates:
+    - "/etc/pki/tls/certs/oqsRootCA.cert"
+    - "/etc/pki/tls/certs/oqsCA.cert"
+    passphrase: zvm4demo

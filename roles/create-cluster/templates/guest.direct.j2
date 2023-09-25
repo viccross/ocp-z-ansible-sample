@@ -1,0 +1,7 @@
+USER {{ cluster_nodes[coreos_role][item].guest_name }} ZVM4DEMO {{ guestmemory[coreos_role] }}G {{ (guestmemory[coreos_role] | int) * 2 }}G  G
+ INCLUDE OCPDFLT
+ COMMAND DEFINE CPU 01-{{ '%02X' % guestvcpus[coreos_role] | int }} TYPE IFL
+ CPU 00
+ IPL CMS
+ SHARE RELATIVE {{ guestvcpus[coreos_role] }}00
+ NICDEF 0600 TYPE HIPERS LAN SYSTEM OCPLAN DEVICES 3

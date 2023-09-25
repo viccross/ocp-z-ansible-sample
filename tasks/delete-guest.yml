@@ -1,0 +1,16 @@
+---
+# tasks file for create-guest-for-linux
+- name: stop a Linux guest
+  shell: /usr/local/bin/smcli id -T {{ cluster_nodes[coreos_role][item].guest_name|quote }} -H 172.24.26.10/44444 -U IBMAUTO -P jTghTGinJupD63yh -t IMMED # noqa 204
+  args:
+    executable: /bin/bash
+  register: ret
+  failed_when:
+    ret.rc == 1 and "Image not active" not in ret.stdout
+  changed_when:
+    ret.rc == 0
+
+- name: delete a Linux guest
+  shell: /usr/local/bin/smcli idd -T {{ cluster_nodes[coreos_role][item].guest_name|quote }} -H 172.24.26.10/44444 -U IBMAUTO -P jTghTGinJupD63yh -e 1 # noqa 204
+  args:
+    executable: /bin/bash

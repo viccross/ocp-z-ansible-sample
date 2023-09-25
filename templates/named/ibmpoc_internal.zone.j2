@@ -1,0 +1,8 @@
+$TTL 900
+@                     IN SOA bastion-int.{{ cluster_domain_name }}. hostmaster.{{ cluster_domain_name }}. (
+                        2021061801 1D 1H 1W 3H
+                      )
+                      IN NS bastion-int.{{ cluster_domain_name }}.
+
+zVM                   IN A 172.24.26.10
+LDAPSRV               IN A 172.24.26.10

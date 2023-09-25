@@ -1,0 +1,6 @@
+---
+# tasks file for create-guest-for-linux
+- name: set the real IPL device for a Linux guest
+  shell: /usr/local/bin/smcli iisd -T {{ cluster_nodes[coreos_role][item].guest_name|quote }} -n 200 -H 172.24.26.10/44444 -U IBMAUTO -P jTghTGinJupD63yh
+  args:
+    executable: /bin/bash

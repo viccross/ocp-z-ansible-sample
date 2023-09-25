@@ -1,0 +1,4 @@
+# BEGIN ANSIBLE MANAGED BLOCK
+[s390x_ICIC_management_node]
+172.24.26.11 ansible_user=root ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+# END ANSIBLE MANAGED BLOCK

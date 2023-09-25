@@ -1,0 +1,7 @@
+---
+# tasks file for create-guest-for-linux
+- name: create a new directory entry for a Linux guest
+  shell: /usr/local/bin/smcli icd -T {{ cluster_nodes[coreos_role][item].guest_name|quote }} -H 172.24.26.10/44444 -U IBMAUTO -P jTghTGinJupD63yh
+  args:
+    stdin: "{{ directory_entry }}"
+    executable: /bin/bash
