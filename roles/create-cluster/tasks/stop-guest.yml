@@ -1,6 +1,6 @@
 ---
 # tasks file for create-guest-for-linux
-# This task uses SMAPI (via the `smcli` command) to boot a Linux guest.
+# This task uses SMAPI (via the `smcli` command) to stop a Linux guest.
 # If `smcli` is not installed, it outputs a message text block to advise that
 # the guest should be IPLed using some alternate method.
 
@@ -9,9 +9,9 @@
     path: /usr/local/bin/smcli
   register: st
 
-- name: IPL a Linux guest
+- name: Shut down a Linux guest
   when: st.stat.executable is defined and st.stat.executable
-  shell: /usr/local/bin/smcli ia -T {{ cluster_nodes[coreos_role][item].guest_name|quote }} -H 172.24.26.10/44444 -U IBMAUTO -P jTghTGinJupD63yh
+  shell: /usr/local/bin/smcli id -T {{ cluster_nodes[coreos_role][item].guest_name|quote }} -t 'WITHIN 60' -H 172.24.26.10/44444 -U IBMAUTO -P jTghTGinJupD63yh
   args:
     executable: /bin/bash
 
@@ -20,6 +20,6 @@
   debug:
     msg:
       - ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - '
-      - '   Automation is ready for you to IPL the guest {{ cluster_nodes[coreos_role][item].guest_name|quote }} '
-      - ' Please perform your local site procedures to start this virtual machine! '
+      - '    Automation is ready for you to stop the guest {{ cluster_nodes[coreos_role][item].guest_name|quote }} '
+      - '  Please perform your local site procedures to stop this virtual machine! '
       - ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - '

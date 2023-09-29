@@ -80,8 +80,11 @@ bastion_public_ip_address: "9.60.86.74"
 
 ocp4_pull_secret: "{{ lookup('file', '{{ webroot }}/.secret/.ocp4_pull_secret') | from_json }}"
 
+# If ZNETBOOT is not used, remove/comment these values
 znetboot_cfg_path: "/mnt/znetboot"
 znetboot_cfg_disk: "LNXMAINT 200"
+
+# Web root for copying the Ignition files
 webroot: "/var/www/html"
 
 # The IP configuration will write out the cluster_base_domain variable.
