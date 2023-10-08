@@ -71,19 +71,15 @@ guestvcpus:
   masters: "6"
   workers: "6"
 
-# The following variables should generally not need to be edited
-
 # This will be the same as the bastion private ip when
 # bastion is a separate VM, otherwise it is the gateway ip.
-# dhcp_server_ip_address is not used by default in a z/VM install
 bastion_public_ip_address: "9.60.86.74"
 
 ocp4_pull_secret: "{{ lookup('file', '{{ webroot }}/.secret/.ocp4_pull_secret') | from_json }}"
 
+# If ZNETBOOT is not used, remove/comment these values
 znetboot_cfg_path: "/mnt/znetboot"
 znetboot_cfg_disk: "LNXMAINT 200"
-webroot: "/var/www/html"
 
-# The IP configuration will write out the cluster_base_domain variable.
-# Look for runtime.yml in the group_vars/all directory (where this file is).
-# If this is the only file in the 'all' directory then the IP configuration did not run :/
+# Web root for copying the Ignition files
+webroot: "/var/www/html"

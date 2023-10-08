@@ -10,6 +10,15 @@ You need to have these requirements satisfied externally before you can run the 
 As written, the z/VM SMAPI is used to perform guest operations including start and stop.
 The z/VM ESI system also provides an `smcli` exec that potentially uses a different command syntax than other versions of `smcli` (such as the one in Feilong, for example).
 
+Some support programs and services are made available in z/VM ESI as well.
+* There is a "firstboot" process in ESI that performs configuration of the Linux ELAN system and services such as DNS.
+The firstboot also adds additional information to the Ansible inventory, in a `group_vars/all/runtime.yaml` file.
+This file is provided here as an empty sample, which will need to be populated (the comments in the file should help with this).
+* Some `systemd` services are provided in z/VM ESI, including:
+  * `ocp-approve-csrs`, which (as the name suggests) approves OCP CSRs
+  * 
+  The functons provided by these services can be reproduced in other ways (e.g. manual approving of CSRs when needed).
+
 The playbook does not perform any z/VM unit-record operations to prepare the guests for boot.
 In z/VM ESI, the `ZNETBOOT` tool (written by Rick Troth) is used to make the guests "self-booting".
 If ZNETBOOT is not used, the playbook would either need to have appropriate changes to add the punching of the CoreOS files needed to boot the installations, or prompt for manual action to prepare and boot the guests.

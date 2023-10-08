@@ -1,0 +1,46 @@
+---
+# task file to convert the bootstrap node to a worker node
+# Checks if smcli is installed
+
+- name: Check if smcli is installed
+  stat:
+    path: /usr/local/bin/smcli
+  register: st
+
+- name: Message if smcli is not available
+  when: st.stat.executable is defined and st.stat.executable
+  debug:
+    msg:
+      - ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - '
+      - '  Your inventory requests renaming the bootstrap for an additional compute   '
+      - ' node, however SMAPI does not appear to be accessible to perform this change '
+      - ' automatically.  Please perform your local procedures to rename the guest    '
+      - ' {{ cluster_nodes["bootstrap"]["bootstrap-0"]["guest_name"] }} to {{ cluster_nodes["bootworker"]["worker-2"]["guest_name"] }}'
+      - ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - '
+
+- name: Rename and restart the bootstrap node using SMAPI
+  when: st.stat.executable is defined and st.stat.executable
+  block:
+  - name: Give the bootstrap time to shut down
+    pause:
+      minutes: 1
+
+  - name: Rename the bootstrap node for conversion # noqa 301
+    shell: smcli ichid -T {{ cluster_nodes["bootstrap"]['bootstrap-0']['guest_name'] }} -n {{ cluster_nodes["bootworker"]['worker-2']['guest_name'] }} -H 172.24.26.10/44444 -U IBMAUTO -P jTghTGinJupD63yh
+
+  - name: Make sure converted node can access the config disk
+    shell:
+      cmd: |
+        ldapmodify -Zx -h LDAPSRV.ibmpoc.internal -p 389 -D racfid=IBMAUTO,profiletype=user,o=ibmzvm -w 'jTghTGinJupD63yh' <<EOFLDIF
+        dn: profilename=LNXMAINT.200,profiletype=VMMDISK,o=ibmzvm
+        changetype: modify
+        add: racfaccesscontrol
+        racfaccesscontrol: ID({{ cluster_nodes['bootworker'][item].guest_name }}) ACCESS(READ) COUNT(0)
+        EOFLDIF
+    with_items: "{{ cluster_nodes['bootworker'] }}"
+
+  - name: Boot the converted worker node
+    include_tasks: boot-guest.yml
+    vars:
+      coreos_role: bootworker
+    with_items: "{{ cluster_nodes[coreos_role] }}"
